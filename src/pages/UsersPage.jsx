@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { UserModalForm } from "../components/UserModalForm";
 import { UsersList } from "../components/UsersList";
 import { UserContext } from "../context/UserContext";
@@ -9,7 +9,12 @@ export const UsersPage = () => {
         users,
         visibleForm,
         handlerOpenForm,
+        getUsers,
     } = useContext(UserContext);
+
+    useEffect(() => {
+        getUsers()
+    }, [])
 
     return (
         <>
@@ -27,7 +32,7 @@ export const UsersPage = () => {
                         </button>}
 
                         {
-                            users.length === 0
+                            users?.length === 0
                                 ? <div className="alert alert-warning">No hay usuarios en el sistema!</div>
                                 : <UsersList />
                         }

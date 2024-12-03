@@ -12,7 +12,7 @@ export const loginReducer = (state = {}, action) => {
                 isAuth: false,
             };
         default:
-            return state;
+            return state;   
     }
 
 }
