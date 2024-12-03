@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
+import { findAll } from "../service/userService";
 
 const initialUsers = [
     {
@@ -25,6 +26,10 @@ export const useUsers = () => {
     const [visibleForm, setVisibleForm] = useState(false);
     const navigate = useNavigate();
 
+    const getUsers =  async() =>{
+        const result = await findAll();
+        dispatch({type:"loadingUsers",payload: result.data})
+    }
     const handlerAddUser = (user) => {
         // console.log(user);
         dispatch({
@@ -97,5 +102,6 @@ export const useUsers = () => {
         handlerUserSelectedForm,
         handlerOpenForm,
         handlerCloseForm,
+        getUsers,
     }
 }
