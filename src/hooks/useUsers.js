@@ -4,14 +4,7 @@ import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
 import { findAll } from "../service/userService";
 
-const initialUsers = [
-    {
-        id: 1,
-        username: 'pepe',
-        password: '12345',
-        email: 'pepe@correo.com'
-    },
-];
+const initialUsers = [];
 
 const initialUserForm = {
     id: 0,

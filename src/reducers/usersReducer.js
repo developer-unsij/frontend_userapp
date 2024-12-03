@@ -3,7 +3,7 @@ export const usersReducer = (state = [], action) => {
 
     switch (action.type) {
         case 'addUser':
-            
+
             return [
                 ...state,
                 {
@@ -23,6 +23,8 @@ export const usersReducer = (state = [], action) => {
                 }
                 return u;
             })
+        case 'loadIngUsers':
+            return state;
         default:
             return state;
     }
