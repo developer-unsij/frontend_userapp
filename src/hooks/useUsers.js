@@ -20,8 +20,9 @@ export const useUsers = () => {
     const [visibleForm, setVisibleForm] = useState(false);
     const navigate = useNavigate();
 
-    const getUsers = () => {
-        const result = findAll();
+    const getUsers = async() => {
+        const result = await findAll();
+        console.log(result);
         dispatch({type:"loadingUsers",payload: result.data});
     }
 

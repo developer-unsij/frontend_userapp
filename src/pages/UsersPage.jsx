@@ -32,7 +32,7 @@ export const UsersPage = () => {
                         </button>}
 
                         {
-                            users?.length === 0
+                            users.length === 0
                                 ? <div className="alert alert-warning">No hay usuarios en el sistema!</div>
                                 : <UsersList />
                         }
