@@ -21,7 +21,7 @@ export const useUsers = () => {
 
     const getUsers = async() => {
         const result = await findAll();
-        dispatch({type:"loadindUsers", payload:result.data})
+        dispatch({type:"loadingUsers", payload:result.data})
     }
 
     const handlerAddUser = (user) => {
