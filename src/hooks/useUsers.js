@@ -2,7 +2,7 @@ import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll } from "../service/userService";
+import { findAll, save, update } from "../service/userService";
 
 const initialUsers = [];
 
@@ -21,27 +21,35 @@ export const useUsers = () => {
 
     const getUsers = async () => {
         const result = await findAll();
-        dispatch({type:"loadingUsers", payload: result.data});
+        dispatch({ type: "loadingUsers", payload: result.data });
     }
 
-    const handlerAddUser = (user) => {
-        // console.log(user);
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
-        });
+    const handlerAddUser = async (user) => {
+        try {
+            let response;
 
-        Swal.fire(
-            (user.id === 0) ?
-                'Usuario Creado' :
-                'Usuario Actualizado',
-            (user.id === 0) ?
-                'El usuario ha sido creado con exito!' :
-                'El usuario ha sido actualizado con exito!',
-            'success'
-        );
-        handlerCloseForm();
-        navigate('/users');
+            if (user.id === 0) {
+                response = await save(user);
+            } else {
+                response = await update(user);
+            }
+
+            dispatch({
+                type: (user.id === 0) ? 'addUser' : 'updateUser',
+                payload: response,
+            });
+
+            Swal.fire(
+                (user.id === 0) ? 'Usuario Creado' : 'Usuario Actualizado',
+                (user.id === 0) ? 'El usuario ha sido creado con éxito!' : 'El usuario ha sido actualizado con éxito!',
+                'success'
+            );
+
+            handlerCloseForm();
+            navigate('/users');
+        } catch (error) {
+            Swal.fire('Error', 'Hubo un problema al guardar o actualizar el usuario', 'error');
+        }
     }
 
     const handlerRemoveUser = (id) => {
