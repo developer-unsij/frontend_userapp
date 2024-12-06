@@ -2,7 +2,7 @@ import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll } from "../services/userService";
+import { findAll, remove, save, update } from "../services/userService";
 
 const initialUsers = [];
 
@@ -24,11 +24,22 @@ export const useUsers = () => {
         dispatch({type:"loadingUsers", payload: result.data})
     }
 
-    const handlerAddUser = (user) => {
+    const handlerAddUser = async (user) => {
         // console.log(user);
+
+        let response = undefined;
+
+        if(user.id === 0){
+            response = await save(user);
+        } else {
+            response = await update(user);
+        }
+
+        //console.log(response)
+
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
+            payload: response.data,
         });
 
         Swal.fire(
@@ -55,9 +66,9 @@ export const useUsers = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
+        }).then( (result) => {
             if (result.isConfirmed) {
-
+                remove(id);
                 dispatch({
                     type: 'removeUser',
                     payload: id,
@@ -73,7 +84,7 @@ export const useUsers = () => {
     }
 
     const handlerUserSelectedForm = (user) => {
-        // console.log(user)
+        console.log(user)
         setVisibleForm(true);
         setUserSelected({ ...user });
     }

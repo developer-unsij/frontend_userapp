@@ -20,3 +20,22 @@ export const save = async ({username, email, password}) => {
     }
     return null;
 }
+
+export const update = async ({id, username, email, password}) => {
+    try{
+        console.log(`${BASE_URL}/${id}`, {id,username,email,password});
+        return await axios.put(`${BASE_URL}/${id}`, {username,email,password});
+    } catch (error){
+        console.error("Error al actualizar el usuario", error);
+    }
+    return null;
+}
+
+export const remove = async (id) => {
+    try{
+        return await axios.delete(`${BASE_URL}/${id}`);
+    } catch (error){
+        console.error("Error al actualizar el usuario", error);
+    }
+    return null;
+}
