@@ -2,7 +2,7 @@ import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll } from "../services/userService";
+import { findAll, save, update } from "../services/userService";
 
 const initialUsers = [];
 
@@ -18,17 +18,25 @@ export const useUsers = () => {
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
     const navigate = useNavigate();
+    
 
     const getUsers = async() => {
         const result = await findAll();
         dispatch({type:"loadingUsers", payload:result.data})
     }
 
-    const handlerAddUser = (user) => {
-        // console.log(user);
+    const handlerAddUser = async (user) => {
+        console.log(user);
+        let user1;
+            if(user.id === 0){
+             user1= await save(user)
+            }else{
+             user1=  await update(user)
+            }
+         console.log("USER1 ==",user1)
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
+            payload:user1,
         });
 
         Swal.fire(
