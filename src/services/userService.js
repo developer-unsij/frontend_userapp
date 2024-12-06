@@ -35,9 +35,10 @@ export const update = async (user) => {
 
 export const remove = async ({id}) => {
     try{
-        return axios.delete(`${BASE_URL}/${id}`);
+        const response = axios.delete(`${BASE_URL}/${id}`);
+        return response.data;
     } catch (error){
-        console.error("Error al eliminar: ", error);
+        console.error("Error al eliminar: ", error.response?.data || error.messagge);
     }
     return undefined;
 }
