@@ -27,9 +27,9 @@ export const update = async(user) => {
     return undefined;
 }
 
-export const remove = async (id) => {
+export const remove = async (user) => {
     try {
-        return await axios.delete(`${BASE_URL}/${id}`);
+        return await axios.delete(`${BASE_URL}/${user.id}`,user);
     } catch (error) {
         console.error("Error al eliminar usuario: ", error);
     }

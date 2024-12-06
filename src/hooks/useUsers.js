@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll, update, save} from "../service/userService";
+import { findAll, update, save, remove} from "../service/userService";
 
 const initialUsers = [];
 
@@ -53,7 +53,6 @@ export const useUsers = () => {
 
     const handlerRemoveUser = (id) => {
         // console.log(id);
-
         Swal.fire({
             title: 'Esta seguro que desea eliminar?',
             text: "Cuidado el usuario sera eliminado!",
@@ -64,7 +63,7 @@ export const useUsers = () => {
             confirmButtonText: 'Si, eliminar!'
         }).then((result) => {
             if (result.isConfirmed) {
-
+                remove({ id });
                 dispatch({
                     type: 'removeUser',
                     payload: id,
