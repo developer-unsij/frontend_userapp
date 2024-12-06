@@ -1,8 +1,9 @@
+
 import { useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Await, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll } from "../services/userService";
+import { deleteUser, findAll, save, update } from "../services/userService";
 
 const initialUsers = [
 ];
@@ -26,11 +27,19 @@ export const useUsers = () => {
         dispatch({type:"loadingUsers",payload: result.data});
     }
 
-    const handlerAddUser = (user) => {
+    const handlerAddUser = async (user) => {
+        let response;
+        console.log("ANTES DEL IF"+user);
+        if(user.id === 0 ){
+            response = await save(user);
+        }else{
+            response = await update(user);
+        }
+console.log("DESPUES DEL IF"+response);
         // console.log(user);
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
+            payload:response.data,
         });
 
         Swal.fire(
@@ -41,14 +50,12 @@ export const useUsers = () => {
                 'El usuario ha sido creado con exito!' :
                 'El usuario ha sido actualizado con exito!',
             'success'
-        );
+        );  
         handlerCloseForm();
         navigate('/users');
     }
 
     const handlerRemoveUser = (id) => {
-        // console.log(id);
-
         Swal.fire({
             title: 'Esta seguro que desea eliminar?',
             text: "Cuidado el usuario sera eliminado!",
@@ -57,8 +64,9 @@ export const useUsers = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si, eliminar!'
-        }).then((result) => {
-            if (result.isConfirmed) {
+        }).then ((result)  =>   {
+            if (result.isConfirmed)  {
+                deleteUser(id);
 
                 dispatch({
                     type: 'removeUser',
@@ -71,8 +79,14 @@ export const useUsers = () => {
                 )
             }
         })
-
     }
+
+
+
+
+
+
+
 
     const handlerUserSelectedForm = (user) => {
         // console.log(user)
@@ -101,3 +115,4 @@ export const useUsers = () => {
         getUsers,
     }
 }
+
