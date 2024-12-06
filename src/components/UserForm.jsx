@@ -13,7 +13,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
     useEffect(() => {
         setUserForm({
             ...userSelected,
-            password: '',
+            password: " ",
         });
     }, [userSelected]);
 

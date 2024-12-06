@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
 import { findAllInRenderedTree } from "react-dom/test-utils";
-import { findALl } from "../services/userService";
+import { findALl, save, update } from "../services/userService";
 
 const initialUsers = [];
 
@@ -25,11 +25,17 @@ export const useUsers = () => {
         dispatch({type:"loadingUsers", payload: result.data});
     }
 
-    const handlerAddUser = (user) => {
-        // console.log(user);
+    const handlerAddUser = async (user) => {
+        let respuesta = null;
+
+        if(user.id === 0){
+            respuesta = await save(user);
+        } else {
+            respuesta = await update(user);
+        }
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
+            payload: respuesta,
         });
 
         Swal.fire(

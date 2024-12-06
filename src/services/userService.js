@@ -13,9 +13,31 @@ export const findALl = async () => {
 
 export const save = async ({username, email, password}) => {
     try {
-        return await axios.post.apply(BASE_URL, {username, email, password});        
+        return await axios.post(BASE_URL, {username, email, password});        
     } catch (error) {
-        console.error("Error al crear el usuario: ", error);
+        console.error("Error al crear el usuario: ", error.response.data?.error || error.messagge);
+    }
+    return undefined;
+}
+
+export const update = async (user) => {
+    try {
+        console.log("user: ", user)
+        const response = await axios.put(`${BASE_URL}/${user.id}`, user);
+        console.log("Respuesta: ", response);
+        return response.data;
+    } catch (error) {
+        console.error("Error al actualizar usuario: ", error.response?.data || error.messagge)
+  
+        return undefined;
+    }
+}
+
+export const remove = async ({id}) => {
+    try{
+        return axios.delete(`${BASE_URL}/${id}`);
+    } catch (error){
+        console.error("Error al eliminar: ", error);
     }
     return undefined;
 }
