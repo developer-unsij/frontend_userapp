@@ -1,8 +1,8 @@
 import { useReducer, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Await, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll } from "../services/userService";
+import { findAll, update, save } from "../services/userService";
 
 const initialUsers = [];
 
@@ -24,23 +24,31 @@ export const useUsers = () => {
         dispatch({type:"loadingUsers", payload: result.data})
     }
 
-    const handlerAddUser = (user) => {
+    const handlerAddUser = async (user) => {
         // console.log(user);
+        let respuesta = null;
+        if(user.id===0){
+            respuesta = await save(user); //-> Data base      
+        }else{
+            respuesta = await update(user);//->Data base
+        }
+
         dispatch({
             type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: user,
+            payload: respuesta.data,
         });
 
         Swal.fire(
-            (user.id === 0) ?
-                'Usuario Creado' :
+            (user.id === 0) ? 
+                'Usuario Creado' : 
                 'Usuario Actualizado',
-            (user.id === 0) ?
-                'El usuario ha sido creado con exito!' :
-                'El usuario ha sido actualizado con exito!',
+            (user.id === 0) ? 
+                'El usuario ha sido creado con éxito!' : 
+                'El usuario ha sido actualizado con éxito!',
             'success'
         );
-        handlerCloseForm();
+
+         handlerCloseForm();
         navigate('/users');
     }
 
