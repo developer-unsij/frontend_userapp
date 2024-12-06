@@ -27,7 +27,7 @@ export const save = async ({username, email, password}) => {
     return undefined;
 }
 
-export const update = async (id,  username, email) => {
+/*export const update = async (id,  username, email) => {
     try {
         
         const response = await axios.put(`${BASE_URL}/${id}`, { username, email });
@@ -36,20 +36,27 @@ export const update = async (id,  username, email) => {
         console.error("Error al actualizar el usuario: ", error);
     }
     return undefined;
-}
+}*/
 
-/*export const update = async (user) => {
+export const update = async (user) => {
     try {
-        return await axios.put(`${BASE_URL}/${user.id}`, { user.userName, email });
+        const response = await axios.put(`${BASE_URL}/${user.id}`, { 
+            username: user.username, 
+            email: user.email, 
+            password: " " 
+        });
+        return response.data;
     } catch (error) {
         console.error("Error al actualizar el usuario: ", error);
     }
     return undefined;
-}*/
+};
+
 
 export const remove = async (id) => {
     try {
-        return await axios.delete(`${BASE_URL}/${id}`);
+        const response = await axios.delete(`${BASE_URL}/${id}`);
+        return response.data;
     } catch (error) {
         console.error("Error al eliminar el usuario: ", error);
     }
