@@ -13,7 +13,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
     useEffect(() => {
         setUserForm({
             ...userSelected,
-            password: " ",
+            password: "",
         });
     }, [userSelected]);
 
@@ -46,7 +46,6 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
             return;
         }
         // console.log(userForm);
-
         // guardar el user form en el listado de usuarios
         handlerAddUser(userForm);
         setUserForm(initialUserForm);

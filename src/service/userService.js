@@ -21,6 +21,7 @@ export const save = async({username, email, password}) => {
 
 export const update = async(user) => {
     try{
+        user.password= ' ';
         return await axios.put(`${BASE_URL}/${user.id}`, user);
     }catch(error){
         console.error("Error al actualizar usuario: ", error.response ? error.response.data : error);    }
@@ -35,3 +36,5 @@ export const remove = async (user) => {
     }
     return undefined;
 };
+
+

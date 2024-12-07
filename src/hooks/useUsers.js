@@ -63,7 +63,7 @@ export const useUsers = () => {
             confirmButtonText: 'Si, eliminar!'
         }).then((result) => {
             if (result.isConfirmed) {
-                remove({ id });
+                remove(id);
                 dispatch({
                     type: 'removeUser',
                     payload: id,
