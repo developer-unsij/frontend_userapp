@@ -1,8 +1,8 @@
 import { useReducer, useState } from "react";
-import { Await, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll, update, save } from "../services/userService";
+import { findAll, update, save, remove } from "../services/userService";
 
 const initialUsers = [];
 
@@ -48,7 +48,7 @@ export const useUsers = () => {
             'success'
         );
 
-         handlerCloseForm();
+        handlerCloseForm();
         navigate('/users');
     }
 
@@ -66,6 +66,7 @@ export const useUsers = () => {
         }).then((result) => {
             if (result.isConfirmed) {
 
+                remove(id);
                 dispatch({
                     type: 'removeUser',
                     payload: id,

@@ -11,9 +11,9 @@ export const findAll = async () => {
     return null;
 }
 
-export const save = async({userName, email, password}) =>{
+export const save = async({username, email, password}) =>{
     try {
-        return await axios.post(BASE_URL, {userName, email, password})
+        return await axios.post(BASE_URL, {username, email, password})
     } catch (error) {
         console.error("Error al crear el usuario: ", error);
     }
@@ -22,7 +22,9 @@ export const save = async({userName, email, password}) =>{
 
 export const update = async ( user ) => {
     try {
-        return await axios.put(`${BASE_URL}/${user.id}`,{user});
+        user.password = " ";
+        //return await axios.put(`${BASE_URL}/${user.id}`,user );
+        return await axios.put(`${BASE_URL}/${user.id}`,user );
     } catch (error) {
         console.error("Error al actualizar el usuario: ", error);
     }
