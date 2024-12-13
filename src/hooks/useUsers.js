@@ -5,6 +5,12 @@ import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
 import { deleteUser, findAll, save, update } from "../services/userService";
 
+const defaultErriors = {
+    username: '',
+    password: '',
+    email: '',
+}
+
 const initialUsers = [
 ];
 
@@ -19,6 +25,8 @@ export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors, setErrors] = useState (defaultErriors);
+
     const navigate = useNavigate();
 
     const getUsers = async() => {
@@ -29,30 +37,42 @@ export const useUsers = () => {
 
     const handlerAddUser = async (user) => {
         let response;
-        console.log("ANTES DEL IF"+user);
-        if(user.id === 0 ){
-            response = await save(user);
-        }else{
-            response = await update(user);
-        }
-console.log("DESPUES DEL IF"+response);
-        // console.log(user);
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload:response.data,
-        });
 
-        Swal.fire(
-            (user.id === 0) ?
-                'Usuario Creado' :
-                'Usuario Actualizado',
-            (user.id === 0) ?
-                'El usuario ha sido creado con exito!' :
-                'El usuario ha sido actualizado con exito!',
-            'success'
-        );  
-        handlerCloseForm();
-        navigate('/users');
+        try{
+            //console.log("ANTES DEL IF"+user);
+            if(user.id === 0 ){
+                response = await save(user);
+            }else{
+                response = await update(user);
+            }
+            console.log("DESPUES DEL IF"+response);
+
+            // console.log(user);
+            dispatch({
+                type: (user.id === 0) ? 'addUser' : 'updateUser',
+                payload:response.data,
+            });
+
+            Swal.fire(
+                (user.id === 0) ?
+                    'Usuario Creado' :
+                    'Usuario Actualizado',
+                (user.id === 0) ?
+                    'El usuario ha sido creado con exito!' :
+                    'El usuario ha sido actualizado con exito!',
+                'success'
+            );  
+            handlerCloseForm();
+            navigate('/users');
+
+        }catch(error){
+            if(error.response && error.response.status === 400){
+                console.error("Error",error.response.data);
+                setErrors(error.response.data);
+            }else{
+                throw errors;
+            }
+        }
     }
 
     const handlerRemoveUser = (id) => {
@@ -107,6 +127,7 @@ console.log("DESPUES DEL IF"+response);
         userSelected,
         initialUserForm,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,
