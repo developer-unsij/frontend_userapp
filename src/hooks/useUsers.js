@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
@@ -14,12 +14,22 @@ const initialUserForm = {
     email: '',
 }
 
+const defaulterrors = {
+    username: '',
+    password: '',
+    email: ''
+}
+
 export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors,setErrors] = useState(defaulterrors);
     const navigate = useNavigate();
 
+    
+
+    
     const getUsers = async () =>{
         const result = await findALl();
         dispatch({type:"loadingUsers", payload: result.data});
@@ -28,27 +38,38 @@ export const useUsers = () => {
     const handlerAddUser = async (user) => {
         let respuesta = null;
 
-        if(user.id === 0){
-            respuesta = await save(user);
-        } else {
-            respuesta = await update(user);
+        try {
+            if(user.id === 0){
+                respuesta = await save(user);
+            } else {
+                respuesta = await update(user);
+            }
+            dispatch({
+                type: (user.id === 0) ? 'addUser' : 'updateUser',
+                payload: respuesta,
+            });
+    
+            Swal.fire(
+                (user.id === 0) ?
+                    'Usuario Creado' :
+                    'Usuario Actualizado',
+                (user.id === 0) ?
+                    'El usuario ha sido creado con exito!' :
+                    'El usuario ha sido actualizado con exito!',
+                'success'
+            );
+            handlerCloseForm();
+            navigate('/users');
+        } catch (error) {
+            // console.error("Ocurrio un error: ", error.response);
+            if(error.response && error.response.status === 400){
+                // console.log("Ocurrio un error: ", error.response.data);
+                setErrors(error.response.data)
+                // console.log("Tenemos estos errores: ", errors);
+            } else {
+                throw(error)
+            }
         }
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: respuesta,
-        });
-
-        Swal.fire(
-            (user.id === 0) ?
-                'Usuario Creado' :
-                'Usuario Actualizado',
-            (user.id === 0) ?
-                'El usuario ha sido creado con exito!' :
-                'El usuario ha sido actualizado con exito!',
-            'success'
-        );
-        handlerCloseForm();
-        navigate('/users');
     }
 
     const handlerRemoveUser = async (id) => {
@@ -77,7 +98,6 @@ export const useUsers = () => {
         })
     }
     
-
     const handlerUserSelectedForm = (user) => {
         // console.log(user)
         setVisibleForm(true);
@@ -97,11 +117,13 @@ export const useUsers = () => {
         userSelected,
         initialUserForm,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,
         handlerOpenForm,
         handlerCloseForm,
         getUsers,
+        
     }
 }
