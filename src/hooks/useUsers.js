@@ -6,6 +6,9 @@ import { findAll, remove, save, update } from "../services/userService";
 
 const initialUsers = [];
 
+const defaultErrors = {username:'',password:'',email:''};
+
+
 const initialUserForm = {
     id: 0,
     username: '',
@@ -17,6 +20,8 @@ export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors, setErrors] = useState (defaultErrors);
+
     const navigate = useNavigate();
     
 
@@ -26,30 +31,42 @@ export const useUsers = () => {
     }
 
     const handlerAddUser = async (user) => {
-        console.log(user);
+        //console.log(user);
         let user1;
+        try {
             if(user.id === 0){
-             user1= await save(user)
-            }else{
-             user1=  await update(user)
-            }
-         console.log("USER1 ==",user1)
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload:user1.data,
-        });
-
-        Swal.fire(
-            (user.id === 0) ?
-                'Usuario Creado' :
-                'Usuario Actualizado',
-            (user.id === 0) ?
-                'El usuario ha sido creado con exito!' :
-                'El usuario ha sido actualizado con exito!',
-            'success'
-        );
-        handlerCloseForm();
-        navigate('/users');
+                user1= await save(user)
+               }else{
+                user1=  await update(user)
+               }
+            console.log("USER1 ==",user1)
+           dispatch({
+               type: (user.id === 0) ? 'addUser' : 'updateUser',
+               payload:user1.data,
+           });
+   
+           Swal.fire(
+               (user.id === 0) ?
+                   'Usuario Creado' :
+                   'Usuario Actualizado',
+               (user.id === 0) ?
+                   'El usuario ha sido creado con exito!' :
+                   'El usuario ha sido actualizado con exito!',
+               'success'
+           );
+           handlerCloseForm();
+           navigate('/users');
+        } catch (error) {
+           // console.error("Este es el error", error.response);
+           if (error.response && error.response.status === 400) {
+           console.error("Este es el error", error.response.data);
+            setErrors(error.response.data);
+           }else{
+            throw error;
+           }
+            
+        }  
+     
     }
 
     const handlerRemoveUser =(id) => {
@@ -98,6 +115,7 @@ export const useUsers = () => {
         userSelected,
         initialUserForm,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,

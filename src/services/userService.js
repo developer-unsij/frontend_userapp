@@ -16,17 +16,15 @@ export const save = async({username, email, password})  => {
     try {
         return await axios.post(BASE_URL,{username, email, password});
     } catch (error) {
-        console.error("Error al crear el usuario", error.response?.data);
+       throw error;
+       
     }
-    return undefined;
 };
 
 export const update = async ({id, username, email, password}) => {
-    console.log("USER1 == ",id,username,email);
     try {
        return await axios.put(`${BASE_URL}/${id}`, { username, email, password });
     } catch (error) {
-        console.error("Error al modificar el usuario", error.response?.data || error.message);
         throw error; 
     }
 };
