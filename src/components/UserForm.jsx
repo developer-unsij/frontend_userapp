@@ -4,7 +4,7 @@ import { UserContext } from "../context/UserContext";
 
 export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
-    const { initialUserForm, handlerAddUser } = useContext(UserContext);
+    const { initialUserForm, handlerAddUser, errors } = useContext(UserContext);
     
     const [userForm, setUserForm] = useState(initialUserForm);
 
@@ -13,7 +13,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
     useEffect(() => {
         setUserForm({
             ...userSelected,
-            password: " ",
+            password: '',
         });
     }, [userSelected]);
 
@@ -28,6 +28,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
     const onSubmit = (event) => {
         event.preventDefault();
+        /*
         if (!username || (!password && id === 0) || !email) {
             Swal.fire(
                 'Error de validacion',
@@ -44,7 +45,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
                 'error'
             );
             return;
-        }
+        }*/
         // console.log(userForm);
 
         // guardar el user form en el listado de usuarios
@@ -64,21 +65,23 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
                 name="username"
                 value={ username}
                 onChange={onInputChange} />
-            
+            <p className="text-danger">{errors?.username}</p>
             { id > 0 || <input
                 className="form-control my-3 w-75"
                 placeholder="Password"
                 type="password"
                 name="password"
                 value={password}
-                onChange={onInputChange} /> }
-            
+                onChange={onInputChange} /> 
+            }
+            <p className="text-danger">{errors?.password}</p>
             <input
                 className="form-control my-3 w-75"
                 placeholder="Email"
                 name="email"
                 value={email}
                 onChange={onInputChange} />
+            <p className="text-danger">{errors?.email}</p>
             <input type="hidden"
                 name="id"
                 value={id} />

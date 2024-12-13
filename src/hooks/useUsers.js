@@ -6,6 +6,12 @@ import { findAll, remove, save, update } from "../services/userService";
 
 const initialUsers = [];
 
+const defaultErrors = {
+    username: '',
+    email: '',
+    password: '',
+}
+
 const initialUserForm = {
     id: 0,
     username: '',
@@ -17,6 +23,7 @@ export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors, setErrors] = useState(defaultErrors);
     const navigate = useNavigate();
 
     const getUsers = async () =>{
@@ -25,34 +32,39 @@ export const useUsers = () => {
     }
 
     const handlerAddUser = async (user) => {
-        // console.log(user);
-
         let response = undefined;
+        try {
+            if(user.id === 0){
+                response = await save(user);
+            } else {
+                response = await update(user);
+            }
 
-        if(user.id === 0){
-            response = await save(user);
-        } else {
-            response = await update(user);
+            //console.log(response)
+
+            dispatch({
+                type: (user.id === 0) ? 'addUser' : 'updateUser',
+                payload: response.data,
+            });
+
+            Swal.fire(
+                (user.id === 0) ?
+                    'Usuario Creado' :
+                    'Usuario Actualizado',
+                (user.id === 0) ?
+                    'El usuario ha sido creado con exito!' :
+                    'El usuario ha sido actualizado con exito!',
+                'success'
+            );
+            handlerCloseForm();
+            navigate('/users');
+        }catch(error){
+            if(error.response && error.response.status === 400){
+                console.error("Error al crear o actualizar el usuario ", error.response.data);
+                setErrors(error.response.data);
+            } else throw error.response;
         }
-
-        //console.log(response)
-
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: response.data,
-        });
-
-        Swal.fire(
-            (user.id === 0) ?
-                'Usuario Creado' :
-                'Usuario Actualizado',
-            (user.id === 0) ?
-                'El usuario ha sido creado con exito!' :
-                'El usuario ha sido actualizado con exito!',
-            'success'
-        );
-        handlerCloseForm();
-        navigate('/users');
+        return errors;
     }
 
     const handlerRemoveUser = (id) => {
@@ -108,5 +120,6 @@ export const useUsers = () => {
         handlerOpenForm,
         handlerCloseForm,
         getUsers,
+        errors,
     }
 }
