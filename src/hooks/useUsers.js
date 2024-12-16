@@ -39,7 +39,7 @@ export const useUsers = () => {
                }else{
                 user1=  await update(user)
                }
-            console.log("USER1 ==",user1)
+           // console.log("USER1 ==",user1)
            dispatch({
                type: (user.id === 0) ? 'addUser' : 'updateUser',
                payload:user1.data,
@@ -55,6 +55,7 @@ export const useUsers = () => {
                'success'
            );
            handlerCloseForm();
+           setErrors([]);
            navigate('/users');
         } catch (error) {
            // console.error("Este es el error", error.response);

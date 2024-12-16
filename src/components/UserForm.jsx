@@ -49,12 +49,13 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
 
         // guardar el user form en el listado de usuarios
         handlerAddUser(userForm);
-        setUserForm(initialUserForm);
+       // setUserForm(initialUserForm);
     }
 
     const onCloseForm = () => {
         handlerCloseForm();
         setUserForm(initialUserForm);
+        
     }
     return (
         <form onSubmit={ onSubmit }>
@@ -64,7 +65,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
                 name="username"
                 value={ username}
                 onChange={onInputChange} />
-            <p className="text-danger">{errors?.username}</p>
+            <p className="text-danger">{errors?.username }</p>
             
             { id > 0 || <input
                 className="form-control my-3 w-75"
@@ -80,13 +81,12 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
                 name="email"
                 value={email}
                 onChange={onInputChange} />
-            <p className="text-danger">{errors?.email}</p>
+            <p className="text-danger">{errors?.email }</p>
 
             <input type="hidden"
                 name="id"
                 value={id} />
-
-            
+ 
             
             <button
                 className="btn btn-primary"
