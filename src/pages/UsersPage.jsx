@@ -12,10 +12,9 @@ export const UsersPage = () => {
         getUsers,
     } = useContext(UserContext);
 
-
-    useEffect(() => {
+    useEffect(() =>{
         getUsers();
-    }, [])
+    },[])
 
     return (
         <>

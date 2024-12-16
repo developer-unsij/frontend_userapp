@@ -1,8 +1,8 @@
-import { useReducer, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
-import { findAll, remove, save, update } from "../service/userService";
+import { findALl, remove, save, update } from "../services/userService";
 import { use } from "react";
 
 const initialUsers = [];
@@ -14,46 +14,65 @@ const initialUserForm = {
     email: '',
 }
 
+const defaulterrors = {
+    username: '',
+    password: '',
+    email: ''
+}
+
 export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
+    const [errors,setErrors] = useState(defaulterrors);
     const navigate = useNavigate();
 
-    const getUsers = async () => {
-        const result = await findAll();
-        dispatch({ type: "loadingUsers", payload: result.data });
+    
+
+    
+    const getUsers = async () =>{
+        const result = await findALl();
+        dispatch({type:"loadingUsers", payload: result.data});
     }
 
     const handlerAddUser = async (user) => {
+        let respuesta = null;
+
         try {
-            let response;
-
-            if (user.id === 0) {
-                response = await save(user);
+            if(user.id === 0){
+                respuesta = await save(user);
             } else {
-                response = await update(user);
+                respuesta = await update(user);
             }
-
             dispatch({
                 type: (user.id === 0) ? 'addUser' : 'updateUser',
-                payload: response,
+                payload: respuesta,
             });
-
+    
             Swal.fire(
-                (user.id === 0) ? 'Usuario Creado' : 'Usuario Actualizado',
-                (user.id === 0) ? 'El usuario ha sido creado con éxito!' : 'El usuario ha sido actualizado con éxito!',
+                (user.id === 0) ?
+                    'Usuario Creado' :
+                    'Usuario Actualizado',
+                (user.id === 0) ?
+                    'El usuario ha sido creado con exito!' :
+                    'El usuario ha sido actualizado con exito!',
                 'success'
             );
-
             handlerCloseForm();
             navigate('/users');
         } catch (error) {
-            Swal.fire('Error', 'Hubo un problema al guardar o actualizar el usuario', 'error');
+            // console.error("Ocurrio un error: ", error.response);
+            if(error.response && error.response.status === 400){
+                // console.log("Ocurrio un error: ", error.response.data);
+                setErrors(error.response.data)
+                // console.log("Tenemos estos errores: ", errors);
+            } else {
+                throw(error)
+            }
         }
     }
 
-    const handlerRemoveUser =  (id) => {
+    const handlerRemoveUser = async (id) => {
         // console.log(id);
 
         Swal.fire({
@@ -64,23 +83,21 @@ export const useUsers = () => {
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
             confirmButtonText: 'Si, eliminar!'
-        }).then( (result)  => {
+        }).then(async (result) => {
             if (result.isConfirmed) {
-                remove(id)
-                
+                remove({id});
                 dispatch({
                     type: 'removeUser',
                     payload: id,
                 });
                 Swal.fire(
-                    'Usuario Eliminado!',
-                    'El usuario ha sido eliminado con exito!',
-                    'success'
-                )
+                        'Eliminado',
+                        'El usuario ha sido eliminado con exito!'
+                );
             }
         })
     }
-
+    
     const handlerUserSelectedForm = (user) => {
         // console.log(user)
         setVisibleForm(true);
@@ -100,11 +117,13 @@ export const useUsers = () => {
         userSelected,
         initialUserForm,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,
         handlerOpenForm,
         handlerCloseForm,
         getUsers,
+        
     }
 }
