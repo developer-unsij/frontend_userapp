@@ -26,9 +26,6 @@ export const useUsers = () => {
     const [visibleForm, setVisibleForm] = useState(false);
     const [errors,setErrors] = useState(defaulterrors);
     const navigate = useNavigate();
-
-    
-
     
     const getUsers = async () =>{
         const result = await findALl();
@@ -46,7 +43,7 @@ export const useUsers = () => {
             }
             dispatch({
                 type: (user.id === 0) ? 'addUser' : 'updateUser',
-                payload: respuesta,
+                payload: respuesta.data,
             });
     
             Swal.fire(
@@ -109,9 +106,11 @@ export const useUsers = () => {
     }
 
     const handlerCloseForm = () => {
+        setErrors(defaulterrors)
         setVisibleForm(false);
         setUserSelected(initialUserForm);
     }
+
     return {
         users,
         userSelected,

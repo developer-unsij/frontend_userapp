@@ -24,7 +24,7 @@ export const update = async (user) => {
         console.log("user: ", user)
         const response = await axios.put(`${BASE_URL}/${user.id}`, user);
         console.log("Respuesta: ", response);
-        return response.data;
+        return response;
     } catch (error) {
         throw(error)
     }
