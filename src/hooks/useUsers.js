@@ -5,6 +5,7 @@ import { usersReducer } from "../reducers/usersReducer";
 import { findAll, update, save, remove } from "../services/userService";
 
 const initialUsers = [];
+let defaultErrors = {username:"",password:"", email:""};
 
 const initialUserForm = {
     id: 0,
@@ -18,6 +19,8 @@ export const useUsers = () => {
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
     const navigate = useNavigate();
+    const [errors, seterrors] = useState(defaultErrors);
+
 
     const getUsers = async () =>{
         const result = await findAll();
@@ -27,29 +30,41 @@ export const useUsers = () => {
     const handlerAddUser = async (user) => {
         // console.log(user);
         let respuesta = null;
-        if(user.id===0){
-            respuesta = await save(user); //-> Data base      
-        }else{
-            respuesta = await update(user);//->Data base
+        try {
+            
+            if(user.id===0){
+                respuesta = await save(user); //-> Data base      
+            }else{
+                respuesta = await update(user);//->Data base
+            }
+    
+            dispatch({
+                type: (user.id === 0) ? 'addUser' : 'updateUser',
+                payload: respuesta.data,
+            });
+            
+            Swal.fire(
+                (user.id === 0) ? 
+                    'Usuario Creado' : 
+                    'Usuario Actualizado',
+                (user.id === 0) ? 
+                    'El usuario ha sido creado con éxito!' : 
+                    'El usuario ha sido actualizado con éxito!',
+                'success'
+            );
+    
+            handlerCloseForm();
+            navigate('/users');
+
+        } catch (error) {
+
+            if(error.response && error.response.status === 400){
+                console.error("Error",error.response.data)
+                seterrors(error.response.data);
+            }else{
+                throw error;
+            }
         }
-
-        dispatch({
-            type: (user.id === 0) ? 'addUser' : 'updateUser',
-            payload: respuesta.data,
-        });
-
-        Swal.fire(
-            (user.id === 0) ? 
-                'Usuario Creado' : 
-                'Usuario Actualizado',
-            (user.id === 0) ? 
-                'El usuario ha sido creado con éxito!' : 
-                'El usuario ha sido actualizado con éxito!',
-            'success'
-        );
-
-        handlerCloseForm();
-        navigate('/users');
     }
 
     const handlerRemoveUser = (id) => {
@@ -94,12 +109,14 @@ export const useUsers = () => {
     const handlerCloseForm = () => {
         setVisibleForm(false);
         setUserSelected(initialUserForm);
+        seterrors({});
     }
     return {
         users,
         userSelected,
         initialUserForm,
         visibleForm,
+        errors,
         handlerAddUser,
         handlerRemoveUser,
         handlerUserSelectedForm,

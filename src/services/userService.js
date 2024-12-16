@@ -15,9 +15,9 @@ export const save = async({username, email, password}) =>{
     try {
         return await axios.post(BASE_URL, {username, email, password})
     } catch (error) {
-        console.error("Error al crear el usuario: ", error);
+        throw error;
     }
-    return null;
+    
 }
 
 export const update = async ( user ) => {
@@ -26,9 +26,9 @@ export const update = async ( user ) => {
         //return await axios.put(`${BASE_URL}/${user.id}`,user );
         return await axios.put(`${BASE_URL}/${user.id}`,user );
     } catch (error) {
-        console.error("Error al actualizar el usuario: ", error);
+        throw error;
     }
-    return null;
+    
 };
 
 export const remove = async (id) => {
