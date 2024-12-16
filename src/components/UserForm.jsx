@@ -13,7 +13,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
     useEffect(() => {
         setUserForm({
             ...userSelected,
-            password: "",
+            password: '',
         });
     }, [userSelected]);
 
@@ -47,7 +47,7 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
         // console.log(userForm);
         // guardar el user form en el listado de usuarios
         handlerAddUser(userForm);
-        setUserForm(initialUserForm);
+        //setUserForm(initialUserForm);
     }
 
     const onCloseForm = () => {
@@ -74,7 +74,6 @@ export const UserForm = ({ userSelected, handlerCloseForm }) => {
                 }
                 <p className="text-danger"> {errors?.password}</p>
 
-            
             <input
                 className="form-control my-3 w-75"
                 placeholder="Email"

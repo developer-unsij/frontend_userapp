@@ -43,7 +43,7 @@ export const useUsers = () => {
             }
             dispatch({
                 type: (user.id === 0) ? 'addUser' : 'updateUser',
-                payload: response,
+                payload: response.data,
             });
 
             Swal.fire(
@@ -108,6 +108,7 @@ export const useUsers = () => {
     }
 
     const handlerCloseForm = () => {
+        setErrors(defaultErrors)
         setVisibleForm(false);
         setUserSelected(initialUserForm);
     }
