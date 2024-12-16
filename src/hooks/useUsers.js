@@ -42,8 +42,10 @@ export const useUsers = () => {
             //console.log("ANTES DEL IF"+user);
             if(user.id === 0 ){
                 response = await save(user);
+                setErrors('');
             }else{
                 response = await update(user);
+                setErrors('');
             }
             console.log("DESPUES DEL IF"+response);
 

@@ -28,6 +28,7 @@ export const update = async ({id, username, email, password}) => {
             throw error;
         }
     };
+    
 export const deleteUser = async (id) => {
     try {
         return await axios.delete(`${BASE_URL}/${id}`);
