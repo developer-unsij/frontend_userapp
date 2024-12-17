@@ -24,31 +24,77 @@ export const useUsers = () => {
     const [users, dispatch] = useReducer(usersReducer, initialUsers);
     const [userSelected, setUserSelected] = useState(initialUserForm);
     const [visibleForm, setVisibleForm] = useState(false);
-    const [errors,setErrors] = useState(defaulterrors);
+    const [errors, setErrors] = useState(defaulterrors);
     const navigate = useNavigate();
 
-    
 
-    
-    const getUsers = async () =>{
+
+
+    const getUsers = async () => {
         const result = await findALl();
-        dispatch({type:"loadingUsers", payload: result.data});
+        dispatch({ type: "loadingUsers", payload: result.data });
     }
 
     const handlerAddUser = async (user) => {
         let respuesta = null;
 
+        console.log("Users" + users);
+
+        let usuarioExistente;
+
         try {
-            if(user.id === 0){
-                respuesta = await save(user);
+            if (user.id === 0) {
+
+            for (let usuarioExistente of  users ) {
+                if (usuarioExistente.username === user.username ) {
+                    Swal.fire(
+                        "Error de Validación",
+                        "El nombre de usuario ya existe.",
+                        "error"
+                    );
+                    return;
+                }
+                if (usuarioExistente.email === user.email) {
+                    Swal.fire(
+                        "Error de Validación",
+                        "El correo ya existe.",
+                        "error"
+                    );
+                    return;
+                }
+                
+            }
+            respuesta = await save(user);
             } else {
+               
+                const arregloTempo = users.filter(usuario => usuario.id !== user.id );
+                
+                for (let usuarioExistente of  arregloTempo ) {
+                    if (usuarioExistente.username === user.username ) {
+                        Swal.fire(
+                            "Error de Validación",
+                            "El nombre de usuario ya existe.",
+                            "error"
+                        );
+                        return;
+                    }
+                    if (usuarioExistente.email === user.email) {
+                        Swal.fire(
+                            "Error de Validación",
+                            "El correo ya existe.",
+                            "error"
+                        );
+                        return;
+                    }
+                }
                 respuesta = await update(user);
+
             }
             dispatch({
                 type: (user.id === 0) ? 'addUser' : 'updateUser',
                 payload: respuesta.data,
             });
-    
+
             Swal.fire(
                 (user.id === 0) ?
                     'Usuario Creado' :
@@ -62,14 +108,14 @@ export const useUsers = () => {
             navigate('/users');
         } catch (error) {
             // console.error("Ocurrio un error: ", error.response);
-            if(error.response && error.response.status === 400){
+            if (error.response && error.response.status === 400) {
                 // console.log("Ocurrio un error: ", error.response.data);
                 setErrors(error.response.data)
                 // console.log("Tenemos estos errores: ", errors);
-            } else {
-                throw(error)
+            } else 
+                throw (error)
             }
-        }
+        
     }
 
     const handlerRemoveUser = async (id) => {
@@ -85,19 +131,19 @@ export const useUsers = () => {
             confirmButtonText: 'Si, eliminar!'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                remove({id});
+                remove({ id });
                 dispatch({
                     type: 'removeUser',
                     payload: id,
                 });
                 Swal.fire(
-                        'Eliminado',
-                        'El usuario ha sido eliminado con exito!'
+                    'Eliminado',
+                    'El usuario ha sido eliminado con exito!'
                 );
             }
         })
     }
-    
+
     const handlerUserSelectedForm = (user) => {
         // console.log(user)
         setVisibleForm(true);
@@ -124,6 +170,6 @@ export const useUsers = () => {
         handlerOpenForm,
         handlerCloseForm,
         getUsers,
-        
+
     }
 }
