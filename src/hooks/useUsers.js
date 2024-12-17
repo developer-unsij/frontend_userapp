@@ -58,11 +58,26 @@ export const useUsers = () => {
             handlerCloseForm();
             navigate('/users');
         } catch (error) {
-            // console.error("Ocurrio un error: ", error.response);
-            if(error.response && error.response.status === 400){
-                // console.log("Ocurrio un error: ", error.response.data);
+            if (error.response && error.response.status === 400){
+                console.log("Ocurrio un error: ", error.response.data);
                 setErrors(error.response.data)
                 // console.log("Tenemos estos errores: ", errors);
+            } else if(error.response && error.response.status === 500 && error.response.data?.message?.includes('constraint')){
+                if(error.response.data?.message?.includes('users.UK6dotkott2kjsp8vw4d0m25fb7') && error.response.data?.message?.includes('users.UKr43af9ap4edm43mmtq01oddj6')){
+                    setErrors({username: "El nombre de usuario ya existe"})
+                    console.log("ambos")
+                }
+
+                if(error.response.data?.message?.includes('users.UKr43af9ap4edm43mmtq01oddj6')){
+                    setErrors({username: "El nombre de usuario ya existe"})
+                    console.log("nombre")
+                }
+
+                if(error.response.data?.message?.includes('users.UK6dotkott2kjsp8vw4d0m25fb7')){
+                    setErrors({email: "El email de usuario ya existe"})
+                    console.log("email")
+                } 
+                console.log(error.response.data)
             } else {
                 throw(error)
             }
