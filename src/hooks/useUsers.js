@@ -1,6 +1,5 @@
 import { useReducer, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import Swal from "sweetalert2";
 import { usersReducer } from "../reducers/usersReducer";
 import { findAll, update, save, remove} from "../service/userService";
@@ -50,6 +49,7 @@ export const useUsers = () => {
                 (user.id === 0) ?
                     'Usuario Creado' :
                     'Usuario Actualizado',
+                    'El usuario ya existe'
                 (user.id === 0) ?
                     'El usuario ha sido creado con exito!' :
                     'El usuario ha sido actualizado con exito!',
@@ -59,11 +59,20 @@ export const useUsers = () => {
             navigate('/users');
         }
         catch(error){
-        // tres iguales para una comparacion estricta
+        // tres iguales === para una comparacion estricta
             if(error.response && error.response.status === 400){
                 console.error("Error",error.response)
                 setErrors(error.response.data)
                 console.log("Error ")
+            }else if(error.response && error.response.status === 500 && error.response.data?.message?.includes('constraint')){
+                console.error("El nombre agregado ya existe",error.response)
+                if(error.response.data?.message?.includes('users.UKr43af9ap4edm43mmtq01oddj6')){
+                    setErrors({username: "El nombre de usuario ya existe"})
+                }
+                if(error.response.data?.message?.includes('users.UK6dotkott2kjsp8vw4d0m25fb7')){
+                    setErrors({email: "El email ya existe"})
+                }
+                console.log(response.data)
             }  else{
                 throw (error);
             }
