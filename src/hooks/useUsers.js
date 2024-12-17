@@ -71,6 +71,8 @@ export const useUsers = () => {
                 }
                 if(error.response.data?.message?.includes('users.UK6dotkott2kjsp8vw4d0m25fb7')){
                     setErrors({email: "El email ya existe"})
+                }if(error.response.data?.message?.includes('users.UK6dotkott2kjsp8vw4d0m25fb7') || error.response.data?.message?.includes('users.UKr43af9ap4edm43mmtq01oddj6')) {
+                    setErrors({email: "El nombre del usuario y el email ya existe"})
                 }
                 console.log(response.data)
             }  else{
