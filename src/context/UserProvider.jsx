@@ -30,6 +30,7 @@ export const UserProvider = ({children}) => {
                 handlerUserSelectedForm,
                 handlerOpenForm,
                 handlerCloseForm,
+                getUsers,
             }
         }>
             {children}

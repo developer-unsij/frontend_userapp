@@ -46,7 +46,7 @@ export const useUsers = () => {
             }
             dispatch({
                 type: (user.id === 0) ? 'addUser' : 'updateUser',
-                payload: respuesta,
+                payload: respuesta.data,
             });
     
             Swal.fire(
